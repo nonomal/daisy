@@ -10,9 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:uni_links/uni_links.dart';
-
+import 'package:app_links/app_links.dart';
 import 'cross.dart';
+
+final appLinks = AppLinks();
 
 final RouteObserver<ModalRoute<void>> routeObserver =
     RouteObserver<ModalRoute<void>>();
@@ -196,7 +197,7 @@ Future<String?> displayTextInputDialog(BuildContext context,
                               fontSize: 12,
                               color: Theme.of(context)
                                   .textTheme
-                                  .bodyText1
+                                  .bodyMedium
                                   ?.color
                                   ?.withOpacity(.5)),
                         ),
@@ -305,9 +306,9 @@ String generateMD5(String data) {
 processLink(String? uri, BuildContext context) {
   print("processLink : $uri");
   if (uri == null) return;
-  if (RegExp(r"^dmzj://comic/([0-9A-z]+)/$").allMatches(uri!).isNotEmpty) {
+  if (RegExp(r"^dmzj://comic/([0-9A-z]+)/$").allMatches(uri).isNotEmpty) {
     String comicId =
-        RegExp(r"^dmzj://comic/([0-9A-z]+)/$").allMatches(uri!).first.group(1)!;
+        RegExp(r"^dmzj://comic/([0-9A-z]+)/$").allMatches(uri).first.group(1)!;
     if (RegExp(r"^\d+$").hasMatch(comicId)) {
       Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
@@ -324,10 +325,10 @@ processLink(String? uri, BuildContext context) {
     }
     return;
   } else if (RegExp(r"^https?://m\.idmzj\.com/info/(\w+)\.html$")
-      .allMatches(uri!)
+      .allMatches(uri)
       .isNotEmpty) {
     String comicId = RegExp(r"^https?://m\.idmzj\.com/info/(\w+)\.html$")
-        .allMatches(uri!)
+        .allMatches(uri)
         .first
         .group(1)!;
     if (RegExp(r"^\d+$").hasMatch(comicId)) {
@@ -348,8 +349,8 @@ processLink(String? uri, BuildContext context) {
   }
 }
 
-StreamSubscription<String?> linkSubscript(BuildContext context) {
-  return linkStream.listen((uri) async {
-    processLink(uri, context);
+StreamSubscription<Uri?> linkSubscript(BuildContext context) {
+  return appLinks.uriLinkStream.listen((Uri? uri) {
+    processLink(uri.toString(), context);
   });
 }

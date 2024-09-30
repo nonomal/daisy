@@ -1,10 +1,10 @@
-import 'package:daisy/configs/reader_controller_type.dart';
-import 'package:daisy/ffi.dart';
+import 'package:daisy/src/rust/api/bridge.dart' as native;
 import 'package:flutter/material.dart';
 
 import '../commons.dart';
 
 enum NovelReaderType {
+  picMove,
   move,
   html,
 }
@@ -29,6 +29,8 @@ NovelReaderType get currentNovelReaderType => _NovelReaderType;
 
 String novelReaderTypeName(NovelReaderType direction, BuildContext context) {
   switch (direction) {
+    case NovelReaderType.picMove:
+      return "混合";
     case NovelReaderType.move:
       return "平移";
     case NovelReaderType.html:

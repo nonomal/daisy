@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:daisy/configs/novel_background_color.dart';
-import 'package:daisy/ffi.dart';
+import 'package:daisy/src/rust/api/bridge.dart' as native;
 import 'package:daisy/screens/components/content_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +12,9 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../configs/novel_font_color.dart';
 import '../configs/novel_font_size.dart';
+import '../configs/novel_line_height.dart';
+import '../configs/novel_margins.dart';
+import '../src/rust/anime_home/proto.dart';
 import 'components/content_loading.dart';
 import 'components/novel_fan_component.dart';
 
@@ -24,8 +27,8 @@ class NovelReaderScreen extends StatefulWidget {
     required this.novel,
     required this.volumes,
     required this.initChapterId,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() => _NovelReaderScreenState();
@@ -75,9 +78,9 @@ class _NovelReaderScreenState extends State<NovelReaderScreen> {
 
     bookText = bookText.trim();
     // 切割文字????s
-    final _mq = MediaQuery.of(context);
-    final _width = _mq.size.width - 30;
-    final _height = _mq.size.height - 60;
+    final mq = MediaQuery.of(context);
+    final width = mq.size.width - novelLeftMargin - novelRightMargin;
+    final height = mq.size.height - novelTopMargin - novelBottomMargin;
 
     List<String> texts = [];
     while (true) {
@@ -89,17 +92,17 @@ class _NovelReaderScreenState extends State<NovelReaderScreen> {
         text: tryRender,
         style: TextStyle(
           fontSize: 14 * novelFontSize,
-          height: 1.2,
+          height: novelLineHeight,
         ),
       );
       final max = TextPainter(
         text: span,
         textDirection: TextDirection.ltr,
       );
-      max.layout(maxWidth: _width);
+      max.layout(maxWidth: width);
       int endOffset = max
           .getPositionForOffset(
-              Offset(_width, _height - 14 * novelFontSize * 1.2))
+              Offset(width, height - 14 * novelFontSize * novelLineHeight))
           .offset;
       texts.add(
         bookText.substring(
@@ -254,6 +257,7 @@ class _NovelReaderScreenState extends State<NovelReaderScreen> {
                           AppBar(
                             backgroundColor: Colors.black.withOpacity(.5),
                             title: Text(chapter.chapterName),
+                            elevation: 0,
                             actions: [
                               IconButton(
                                 onPressed: _onChooseEp,
@@ -335,6 +339,28 @@ class _NovelReaderScreenState extends State<NovelReaderScreen> {
                       setState(() => {});
                     },
                   ),
+                  _bottomIcon(
+                    icon: Icons.format_line_spacing_sharp,
+                    title: novelLineHeight.toString(),
+                    onPressed: () async {
+                      await modifyNovelLineHeight(context);
+                      resetFont();
+                      setState(() => {});
+                    },
+                  ),
+                  _bottomIcon(
+                    icon: Icons.fullscreen_exit_outlined,
+                    title: "边距",
+                    onPressed: () async {
+                      await novelMarginsSettingsPop(context);
+                      resetFont();
+                      setState(() => {});
+                    },
+                  ),
+                ],
+              ),
+              Row(
+                children: [
                   _bottomIcon(
                     icon: Icons.format_color_text,
                     title: "颜色",
@@ -558,17 +584,17 @@ class _NovelReaderScreenState extends State<NovelReaderScreen> {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.only(
-          top: 35,
-          bottom: 25,
-          left: 15,
-          right: 15,
+        padding: EdgeInsets.only(
+          top: novelTopMargin,
+          bottom: novelBottomMargin,
+          left: novelLeftMargin,
+          right: novelRightMargin,
         ),
         child: Text(
           text,
           style: TextStyle(
             fontSize: 14 * novelFontSize,
-            height: 1.2,
+            height: novelLineHeight,
             color: getNovelFontColor(context),
           ),
         ),

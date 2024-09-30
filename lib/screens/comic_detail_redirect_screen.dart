@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:daisy/ffi.dart';
+import 'package:daisy/src/rust/api/bridge.dart' as native;
 import 'package:daisy/screens/comic_detail_screen.dart';
 import 'package:daisy/screens/components/content_error.dart';
 import 'package:daisy/screens/components/content_loading.dart';
@@ -9,8 +9,7 @@ import 'package:flutter/material.dart';
 class ComicDetailRedirectScreen extends StatefulWidget {
   final String comicIdString;
 
-  const ComicDetailRedirectScreen({Key? key, required this.comicIdString})
-      : super(key: key);
+  const ComicDetailRedirectScreen({super.key, required this.comicIdString});
 
   @override
   State<StatefulWidget> createState() => _ComicDetailRedirectScreenState();
@@ -37,6 +36,7 @@ class _ComicDetailRedirectScreenState extends State<ComicDetailRedirectScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
+      future: _future,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasError) {
           return ContentError(

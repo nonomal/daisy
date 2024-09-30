@@ -1,4 +1,4 @@
-import 'package:daisy/ffi.dart';
+import 'package:daisy/src/rust/api/bridge.dart' as native;
 import 'package:flutter/material.dart';
 
 import '../commons.dart';
@@ -34,7 +34,7 @@ String readerDirectionName(ReaderDirection direction, BuildContext context) {
     case ReaderDirection.leftToRight:
       return "从左到右";
     case ReaderDirection.rightToLeft:
-      return "从又到左";
+      return "从右到左";
   }
 }
 

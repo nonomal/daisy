@@ -3,6 +3,8 @@ import 'package:daisy/configs/android_version.dart';
 import 'package:daisy/configs/login.dart';
 import 'package:daisy/configs/novel_background_color.dart';
 import 'package:daisy/configs/novel_font_color.dart';
+import 'package:daisy/configs/novel_line_height.dart';
+import 'package:daisy/configs/novel_margins.dart';
 import 'package:daisy/configs/novel_reader_type.dart';
 import 'package:daisy/configs/reader_controller_type.dart';
 import 'package:daisy/configs/reader_direction.dart';
@@ -12,15 +14,16 @@ import 'package:daisy/configs/versions.dart';
 import 'package:daisy/screens/app_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:daisy/cross.dart';
-import 'package:daisy/ffi.dart';
+import 'package:daisy/src/rust/api/bridge.dart' as native;
 
 import '../configs/auto_clean.dart';
 import '../configs/last_module.dart';
 import '../configs/novel_font_size.dart';
 import '../configs/themes.dart';
+import '../configs/two_page_gallery_direction.dart';
 
 class InitScreen extends StatefulWidget {
-  const InitScreen({Key? key}) : super(key: key);
+  const InitScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _InitScreenState();
@@ -36,8 +39,11 @@ class _InitScreenState extends State<InitScreen> {
     await initReaderDirection();
     await initReaderSliderPosition();
     await initReaderType();
+    await initTwoPageDirection();
     await initNovelReaderType();
     await initNovelFontSize();
+    await initNovelLineHeight();
+    await initNovelMargins();
     await initNovelFontColor();
     await initNovelBackgroundColor();
     await initVersion();
